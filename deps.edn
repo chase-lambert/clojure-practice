@@ -1,6 +1,6 @@
 {:paths ["src" "resources"]
  
- :deps {criterium/criterium {:mvn/version "0.4.6"}}
+ :deps {}
 
  :aliases 
  {:build {:deps {io.github.clojure/tools.build 
