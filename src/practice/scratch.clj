@@ -1,5 +1,6 @@
-(ns practice.scratch) 
+(ns practice.scratch 
+  (:require
+    [clojure.string :as str]))
 
-(defn add [a b]
-  (+ a b))
 
+(some #{:a :b :c} [:e :f :a])
