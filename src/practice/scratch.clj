@@ -2,5 +2,10 @@
   (:require
     [clojure.string :as str]))
 
+(defn head [[x _]]
+  x)
 
-(some #{:a :b :c} [:e :f :a])
+(head [1 2 3])
+(head ["a" "b" "c"])
+(head [])
+
