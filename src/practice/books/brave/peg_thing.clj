@@ -47,8 +47,8 @@
   (if (in-bounds? max-pos neighbor destination)
     (reduce (fn [new-board [p1 p2]] 
               (assoc-in new-board [p1 :connections p2] neighbor))
-            board
-            [[pos destination] [destination pos]])
+      board
+      [[pos destination] [destination pos]])
     board))
 
 (defn connect-right [board max-pos pos]
@@ -77,16 +77,16 @@
   (let [pegged-board (assoc-in board [pos :pegged] true)]
     (reduce (fn [new-board connector] 
               (connector new-board max-pos pos))
-            pegged-board
-            [connect-right connect-down-left connect-down-right])))
+      pegged-board
+      [connect-right connect-down-left connect-down-right])))
 
 (defn new-board [rows]
   (let [initial-board {:rows rows}
         max-pos (row-tri rows)]
     (reduce (fn [board pos] 
               (add-pos board max-pos pos))
-            initial-board
-            (range 1 (inc max-pos)))))
+      initial-board
+      (range 1 (inc max-pos)))))
 ;;;;
 ;; Move pegs
 ;;;;

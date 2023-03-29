@@ -1,7 +1,8 @@
 (ns practice.challenges
   (:require
-   [clojure.string :as s]
-   [clojure.test   :refer [deftest is]]))
+    [clojure.string :as string]
+    [clojure.test   :refer [deftest is]]
+    [criterium.core :as crit]))
 
 ;; rendezvous with cassidoo: 22-07-31
 ;; Number of Ones 
@@ -31,7 +32,7 @@
               [b a]))
        (flatten)
        (into [])))
-     
+
 ;; (swap-pairs '(1 2 3 4)) ;; [2 1 4 3]
 
   
@@ -40,7 +41,7 @@
 
 (defn format-column [column width]
   (for [row column
-        :let [word     (s/trim row)
+        :let [word     (string/trim row)
               new-word (str "| " (format (str "%-" (dec width) "s") word))
               dashes   (str "| " (apply str (repeat (- width 2) "-")) " ")]]
     (if (= (second word) \-)
@@ -48,9 +49,9 @@
       new-word)))
 
 (defn format-markdown-table [markdown-string]
-  (let [rows        (s/split-lines markdown-string)
+  (let [rows        (string/split-lines markdown-string)
         split-rows  (map rest 
-                         (map #(s/split % #"\|") rows))
+                         (map #(string/split % #"\|") rows))
         columns     (apply map vector split-rows)
         new-columns (for [column columns
                           :let [width (apply max
@@ -59,8 +60,8 @@
         new-rows    (apply map vector new-columns)]
     (reduce (fn [s row]
               (str s (apply str row) "|\n"))
-            ""
-            new-rows)))
+      ""
+      new-rows)))
 
 (def input-markdown
   "| Syntax | Description |
@@ -197,9 +198,9 @@
   (is (= (generate-arrays 1) [[1]])))
 
 
-;; rendezvous with cassidoo challenge: 23-01-29
+;; rendezvous with cassidoo challenge: 23-02-20
 (defn paren-as-num [c]
-  (case c 
+  (case c
     \(  1
     \) -1
     0))
@@ -217,5 +218,68 @@
   (is (= (num-balanced ")))))") 5)))
 
 
+;; rendezvous with cassidoo challenge: 23-02-26
+(defn repeated-groups [nums]
+  (->> nums
+       (partition-by identity)
+       (filter #(> (count %) 1))
+       (mapv vec)))
 
+(defn repeated-groups-transduce [nums]
+  (let [xform (comp 
+                (partition-by identity) 
+                (filter #(> (count %) 1)))]
+    (into [] xform nums)))
+
+;; (def nums (into [] (repeatedly 1000000 #(rand-int 10))))
+;; (crit/bench (repeated-groups nums))
+;; (crit/bench (repeated-groups-transduce nums))
+
+(deftest repeated-groups-test
+  (is (= (repeated-groups [1 2 2 4 5]) [[2 2]]))
+  (is (= (repeated-groups [1 1 0 0 8 4 4 4 3 2 1 9 9]) [[1 1] [0 0] [4 4 4] [9 9]]))
+  (is (= (repeated-groups [1 2 2 4 5]) (repeated-groups-transduce [1 2 2 4 5]))))
+
+
+;; rendezvous with cassidoo challenge: 23-03-05
+(defn scramble-word [w]
+  (let [middle-letters (subs w 1 (dec (count w)))
+        mixed-middle   (shuffle (seq middle-letters))]
+    (str (first w) (apply str mixed-middle) (last w))))
+  
+(defn scramble [s]
+  (string/join " "
+     (reduce (fn [acc w]
+               (cond  
+                 (#{"." "," "?"} w)
+                 (conj (pop acc) (str (last acc) w))
+
+                 (> (count w) 3)
+                 (conj acc (scramble-word w))
+
+                 :else (conj acc w)))
+       []
+       (re-seq #"\w+|[^\w\s]" s))))
+
+(comment 
+  (def s "A quick brown fox jumped over the lazy dog.")
+  (scramble s)) ;; "A qucik bworn fox jumepd oevr the lzay dog."
+
+
+;; rendezvous with cassidoo challenge: 23-03-27
+(defn roll-dice [dice-str]
+  (let [roll-die (fn [die-size] 
+                   (inc (rand-int die-size)))]
+    (->> (string/split dice-str #"\+") ;; ["1d8" "2d10"]
+         (map #(string/split % #"d"))  ;; (["1" "8"] ["2" "10"])
+         (map #(map parse-long %))     ;; ((1 8) (2 10))
+         (mapcat (fn [[n size]]
+                   (repeatedly n #(roll-die size))))
+         (reduce + 0))))
+
+(comment
+  (repeatedly 5 #(roll-dice "4d4"))      ;; (8 11 15 14 8)
+  (repeatedly 5 #(roll-dice "3d20"))     ;; (30 14 39 30 29)
+  (repeatedly 5 #(roll-dice "1d8+2d10")) ;; (13 22 25 19 19)
+  ,) 
 

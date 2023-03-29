@@ -64,13 +64,13 @@
   (reduce (fn [all-parts n]
             (conj all-parts {:size size
                              :name (s/replace name #"-(.*)" (str "-" n))}))
-          #{}
-          (range 1 (inc n-parts-to-add))))
+    #{}
+    (range 1 (inc n-parts-to-add))))
 
 (defn symmetrize-body-parts [alien-body-parts n-parts-to-add]
   (reduce (fn [final-body-parts part]
             (into final-body-parts (matching-parts part n-parts-to-add)))
-          []
-          alien-body-parts))
+    []
+    alien-body-parts))
 
 (symmetrize-body-parts alien-body-parts 3)

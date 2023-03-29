@@ -20,8 +20,8 @@
               (if (pred x)
                 (conj acc x)
                 acc))
-            []
-            coll)))
+      []
+      coll)))
 
 ;; (my-filter even? (range 10)) ;; (0 2 4 6 8)
 ;; (= (filter even? (range 10))
@@ -32,7 +32,7 @@
   (reduce (fn [_ x]
             (when (pred x)
               (reduced (pred x))))
-          coll))
+    coll))
 
 ;; (some    even? (range 10)) ;; true
 ;; (my-some even? (range 10)) ;; true
@@ -68,8 +68,8 @@
   (map (fn [unmapped-row]
          (reduce (fn [row-map [vamp-key value]]
                    (assoc row-map vamp-key (convert vamp-key value)))
-                 {}
-                 (map vector vamp-keys unmapped-row)))
+           {}
+           (map vector vamp-keys unmapped-row)))
        rows))
 
 ;; (first (mapify (parse data))) ;; {:name "Edward Cullen", :glitter-index 10}
@@ -117,8 +117,8 @@
 (defn maps->csv [maps]
   (reduce (fn [s m]
             (str s (str (:name m) "," (:glitter-index m) "\n"))) 
-          ""
-          maps))
+    ""
+    maps))
 
 ;; (maps->csv suspects) ;; "Edward Cullen,10\nBella Swan,0\nCharlie Swan,0\nJacob Black,3\nCarlisle Cullen,6\n"
 ;; (= data (maps->csv suspects)) ;; true
