@@ -1,6 +1,6 @@
 (ns practice.books.brave.chapter-3
   (:require
-   [clojure.string :as s]))
+   [clojure.string :as str]))
 
 ;; 1
 
@@ -10,14 +10,12 @@
 (hash-map :a 1 :b 1) ;; {:b 1, :a 1}
 (hash-set :a 1 :b 1) ;; #{1 :b :a}
 
-
 ;; 2
 
 (defn add-100 [n]
   (+ 100 n))
 
 (add-100 1) ;; 101
-
 
 ;; 3
 
@@ -28,14 +26,12 @@
 (def dec9 (dec-maker 9))
 (dec9 10) ;; 1
 
-
 ;; 4
 
 (defn mapset [f coll]
   (set (map f coll)))
 
 (mapset inc [1 1 2 2]) ;; #{3 2}
-
 
 ;; 5 & 6
 
@@ -63,14 +59,14 @@
 (defn matching-parts [{:keys [name size]} n-parts-to-add]
   (reduce (fn [all-parts n]
             (conj all-parts {:size size
-                             :name (s/replace name #"-(.*)" (str "-" n))}))
-    #{}
-    (range 1 (inc n-parts-to-add))))
+                             :name (str/replace name #"-(.*)" (str "-" n))}))
+          #{}
+          (range 1 (inc n-parts-to-add))))
 
 (defn symmetrize-body-parts [alien-body-parts n-parts-to-add]
   (reduce (fn [final-body-parts part]
             (into final-body-parts (matching-parts part n-parts-to-add)))
-    []
-    alien-body-parts))
+          []
+          alien-body-parts))
 
 (symmetrize-body-parts alien-body-parts 3)

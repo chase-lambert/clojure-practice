@@ -1,12 +1,12 @@
 (ns practice.core
-  ;; (:require)
+  (:require
    ;; [practice.brave.peg-thing :refer [peg-thing]]))
     ;; [practice.challenges :as challenges])
-   ;; [practice.scratch :as scratch]))
+   [practice.scratch :as scratch])
    ;; [practice.word-freq :refer :all]))
   (:gen-class))
 
 (set! *warn-on-reflection* true)
 
 (defn -main [args]
-  (println (type args)))
+  (scratch/example))

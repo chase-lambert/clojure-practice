@@ -1,6 +1,6 @@
-(ns practice.books.brave.peg-thing 
+(ns practice.books.brave.peg-thing
   (:require
-   [clojure.string :as s]))
+   [clojure.string :as str]))
 
 (declare successful-move prompt-move game-over prompt-rows)
 
@@ -11,7 +11,7 @@
   "Generates lazy sequence of triangular numbers"
   ([] (tri* 0 1))
   ([sum n] (let [new-sum (+ sum n)]
-             (cons new-sum 
+             (cons new-sum
                    (lazy-seq (tri* new-sum (inc n)))))))
 
 (def tri (tri*))
@@ -19,22 +19,22 @@
 (defn triangular?
   "Is the number triangular? e.g. 1, 3, 6, 10, 15, etc"
   [n]
-  (= n (last 
-         (take-while #(>= n %) tri))))
+  (= n (last
+        (take-while #(>= n %) tri))))
 
 (defn row-tri
   "The triangular number at the end of row n"
   [n]
-  (last 
-    (take n tri)))
+  (last
+   (take n tri)))
 
 (defn row-num
   "Returns row number the position belongs to: pos 1 in row 1,
   positions 2 and 3 in row 2, etc"
   [pos]
-  (inc 
-    (count 
-      (take-while #(> pos %) tri))))
+  (inc
+   (count
+    (take-while #(> pos %) tri))))
 
 (defn in-bounds?
   "Is every position less than or equal the max position?"
@@ -45,16 +45,16 @@
   "Form a mutual connection between two positions"
   [board max-pos pos neighbor destination]
   (if (in-bounds? max-pos neighbor destination)
-    (reduce (fn [new-board [p1 p2]] 
+    (reduce (fn [new-board [p1 p2]]
               (assoc-in new-board [p1 :connections p2] neighbor))
-      board
-      [[pos destination] [destination pos]])
+            board
+            [[pos destination] [destination pos]])
     board))
 
 (defn connect-right [board max-pos pos]
   (let [neighbor    (inc pos)
         destination (inc neighbor)]
-    (if-not (or (triangular? neighbor) 
+    (if-not (or (triangular? neighbor)
                 (triangular? pos))
       (connect board max-pos pos neighbor destination)
       board)))
@@ -75,18 +75,18 @@
   "Pegs the position and performs connections"
   [board max-pos pos]
   (let [pegged-board (assoc-in board [pos :pegged] true)]
-    (reduce (fn [new-board connector] 
+    (reduce (fn [new-board connector]
               (connector new-board max-pos pos))
-      pegged-board
-      [connect-right connect-down-left connect-down-right])))
+            pegged-board
+            [connect-right connect-down-left connect-down-right])))
 
 (defn new-board [rows]
   (let [initial-board {:rows rows}
         max-pos (row-tri rows)]
-    (reduce (fn [board pos] 
+    (reduce (fn [board pos]
               (add-pos board max-pos pos))
-      initial-board
-      (range 1 (inc max-pos)))))
+            initial-board
+            (range 1 (inc max-pos)))))
 ;;;;
 ;; Move pegs
 ;;;;
@@ -143,7 +143,7 @@
 ;;;;
 (def alpha-start 97)
 (def alpha-end 123)
-(def letters 
+(def letters
   (map (comp str char) (range alpha-start alpha-end)))
 (def pos-chars 3)
 
@@ -178,15 +178,15 @@
 (defn row-padding
   "String of spaces to add to the beginning of a row to center it"
   [row-num rows]
-  (let [pad-length (/ (* (- rows row-num) 
-                         pos-chars) 
+  (let [pad-length (/ (* (- rows row-num)
+                         pos-chars)
                       2)]
-    (apply str 
-           (take pad-length (repeat " ")))))
+    (str/join
+     (take pad-length (repeat " ")))))
 
 (defn render-row [board row-num]
   (str (row-padding row-num (:rows board))
-       (s/join " " (map (partial render-pos board) (row-positions row-num)))))
+       (str/join " " (map (partial render-pos board) (row-positions row-num)))))
 
 (defn print-board [board]
   (doseq [row-num (range 1 (inc (:rows board)))]
@@ -198,16 +198,16 @@
 (defn letter->pos
   "Converts a letter string to the corresponding position number"
   [letter]
-  (inc (- (int (first letter)) 
+  (inc (- (int (first letter))
           alpha-start)))
 
 (defn get-input
   "Waits for user to enter text and hit enter, then cleans the input"
   ([] (get-input ""))
-  ([default] (let [input (s/trim (read-line))]
+  ([default] (let [input (str/trim (read-line))]
                (if (empty? input)
                  default
-                 (s/lower-case input)))))
+                 (str/lower-case input)))))
 
 (defn characters-as-strings
   "Given a string, return a collection consisting of each individual

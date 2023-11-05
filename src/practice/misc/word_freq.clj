@@ -1,7 +1,7 @@
-(ns practice.word-freq
+(ns practice.misc.word-freq
   (:require
    [clojure.java.io :as io]
-   [clojure.string  :as s]))
+   [clojure.string  :as str]))
 
 (defn print-word-freqs [pairs]
   (doseq [pair pairs]
@@ -9,8 +9,8 @@
 
 (defn word-freqs [fname]
   (let [data (slurp fname)]
-    (->> (s/split ^String data #"\n|[  ]")
-         (map #(s/lower-case ^String %))
+    (->> (str/split ^String data #"\n|[  ]")
+         (map #(str/lower-case ^String %))
          (frequencies)
          (sort-by val >))))
 
@@ -19,16 +19,16 @@
 (defn word-freqs-2 [fname]
   (with-open [rdr (io/reader fname)]
     (->> (line-seq rdr)
-         (mapcat #(s/split % #"\n|[ ]"))
-         (map #(s/lower-case %))
+         (mapcat #(str/split % #"\n|[ ]"))
+         (map str/lower-case)
          (frequencies)
          (sort-by val >))))
 
 ;; (time (print-word-freqs (word-freqs-2 "resources/bible-10.txt")))
 
 (defn line-freq [l]
-  (->> (s/split l #"\W+")
-       (map s/lower-case)
+  (->> (str/split l #"\W+")
+       (map str/lower-case)
        (frequencies)))
 
 (defn word-freqs-3 [fname]
@@ -51,8 +51,8 @@
 
 (defn word-freqs-4 [text]
   (with-open [rdr (clojure.java.io/reader text)]
-    (->> (frequencies2 (comp (mapcat #(clojure.string/split % #" "))
-                             (map #(clojure.string/lower-case %)))
+    (->> (frequencies2 (comp (mapcat #(str/split % #" "))
+                             (map str/lower-case))
                        (line-seq rdr))
          (sort-by val >))))
 

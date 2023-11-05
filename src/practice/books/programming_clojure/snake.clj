@@ -1,10 +1,10 @@
 (ns practice.books.programming-clojure.snake
-  (:import 
-    (java.awt Color Dimension)
-    (java.awt.event ActionListener KeyListener)
-    (javax.swing JPanel JFrame Timer JOptionPane))
-  (:require 
-    [practice.books.programming-clojure.import-static :refer [import-static]]))
+  (:import
+   (java.awt Color Dimension)
+   (java.awt.event ActionListener KeyListener)
+   (javax.swing JPanel JFrame Timer JOptionPane))
+  (:require
+   [practice.books.programming-clojure.import-static :refer [import-static]]))
 
 (import-static java.awt.event.KeyEvent VK_LEFT VK_RIGHT VK_UP VK_DOWN)
 
@@ -14,15 +14,15 @@
 (def turn-millis 16)
 (def win-length   5)
 (def dirs {VK_LEFT  [-1  0]
-           VK_RIGHT [ 1  0]        
-           VK_UP    [ 0 -1]
-           VK_DOWN  [ 0  1]})
+           VK_RIGHT [1  0]
+           VK_UP    [0 -1]
+           VK_DOWN  [0  1]})
 
 (defn add-points [& pts]
   (vec
-    (apply map + pts)))
+   (apply map + pts)))
 
-(defn point-to-screen-rect [pt]
+(defn point->screen-rect [pt]
   (map #(* point-size %)
        [(pt 0) (pt 1) 1 1]))
 
@@ -57,24 +57,24 @@
 
 (defn reset-game! [snake apple]
   (dosync
-    (ref-set apple (create-apple))
-    (ref-set snake (create-snake))))
+   (ref-set apple (create-apple))
+   (ref-set snake (create-snake))))
 
 (defn update-direction! [snake newdir]
   (when newdir
     (dosync
-      (alter snake turn newdir))))
+     (alter snake turn newdir))))
 
 (defn update-positions! [snake apple]
   (dosync
-    (if (eats? @snake @apple)
-      (do (ref-set apple (create-apple))
-          (alter snake move :grow))
-      (alter snake move)))
+   (if (eats? @snake @apple)
+     (do (ref-set apple (create-apple))
+         (alter snake move :grow))
+     (alter snake move)))
   nil)
 
 (defn fill-point [g pt color]
-  (let [[x y width height] (point-to-screen-rect pt)]
+  (let [[x y width height] (point->screen-rect pt)]
     (.setColor g color)
     (.fillRect g x y width height)))
 
@@ -86,7 +86,7 @@
 (defmethod paint :snake [g {:keys [body color]}]
   (doseq [point body]
     (fill-point g point color)))
- 
+
 (defn game-panel [frame snake apple]
   (proxy [JPanel ActionListener KeyListener] []
     (paintComponent [g]
@@ -109,11 +109,11 @@
                   (* (inc height) point-size)))
     (keyReleased [e])
     (keyTyped [e])))
-     
+
 (defn game []
   (let [snake (ref (create-snake))
         apple (ref (create-apple))
-        frame (JFrame. "Snake")    
+        frame (JFrame. "Snake")
         panel (game-panel frame snake apple)
         timer (Timer. turn-millis panel)]
     (doto panel
@@ -125,4 +125,4 @@
       (.setVisible true))
     (.start timer)
     [snake, apple, timer]))
-      
+

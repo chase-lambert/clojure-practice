@@ -1,14 +1,16 @@
 (ns profile.github
   (:require
-    [profile.app-materials    :refer [cover-letter resume clojure-or-rust-job-offers]]
-    [profile.side-effects     :refer [send-email update-cover-letter]]
-    [profile.accomplish-goals :refer [crush-interview! accept-offer!]]))
+   [profile.app-materials    :refer [cover-letter resume clojure-or-rust-job-offers]]
+   [profile.side-effects     :refer [send-email update-cover-letter]]
+   [profile.accomplish-goals :refer [crush-interview! accept-offer!]]))
 
 (def about-me
   {:name  "Chase Lambert"
    :email "chaselambert@gmail.com"
    :desc  "I am a self taught developer who has experience building full stack web apps.
-           I am looking for a new role using Clojure/ClojureScript or Rust.
+           I am looking for a new role using Clojure/ClojureScript.
+           Frontend experience: Reagent, Re-Frame, Fulcro, Tailwind
+           Backend experience: Ring, Reitit, Integrant, Jetty, HugSQL (Postgres)
            I prefer remote but will consider relocation within the US.
            I have mainly focused on web development but am open to other projects as well"})
 
@@ -44,5 +46,5 @@
     (crush-interview!)
     (accept-offer!)))
 
-(comment 
+(comment
   (find-new-job clojure-or-rust-job-offers))

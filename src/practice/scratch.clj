@@ -1,17 +1,20 @@
-(ns practice.scratch 
+(ns practice.scratch
   (:require
-    [wally.main :as w]
-    [wally.selectors :as ws]
-    [garden.selectors :as s]))
-    ;; [clojure.string :as string] 
-    ;; [criterium.core :refer [bench]]
-    ;; [clj-async-profiler.core :as prof]))
+   [clojure.test :refer [deftest is]]
+   [clojure.pprint :refer [cl-format]]))
+   ;; [clojure.core.async :as async]))
+   ;; [clj-async-profiler.core :as prof]))
 
 
-(w/navigate "https://clojars.org/metosin/jsonista")
-(w/click [(ws/text "Copy") (ws/nth= "1")])
-  
-(w/fill :#search "reitit")
-(w/keyboard-press "Enter")
-(w/click (s/a (s/attr= :href "/metosin/reitit")))
-(.textContent (w/-query (ws/text "Downloads")))
+(defn create-user [name age email state]
+  {:name  name
+   :age   age
+   :email email
+   :state state})
+
+(defn describe [{:keys [name age]}]
+  (str name " is " age " years old"))
+
+(def me (create-user "Chase" 43 "chase@foo.com" "NC"))
+
+(describe me)
