@@ -368,3 +368,47 @@
          (separate-and-sort [4 3 2 1 5 7 8 9])))
   (is (= [[] [1 1 1 1]] 
          (separate-and-sort [1 1 1 1]))))
+
+
+;; rendezvous with cassidoo challenge: 23-11-06
+(defn score-word-game [word-list letter-scores]
+  (let [word-score (fn [word]
+                    (let [letter-score (reduce + (map letter-scores word))]
+                      (* (count word) letter-score)))]
+    (apply max-key word-score word-list)))
+
+(deftest score-word-game-test
+  (let [word-list     ["apple" "banana" "cherry" "date" "fig"]
+        letter-scores (zipmap "abcdefghijklmnopqrstuvwxyz" (range 1 27))]
+
+    (is (= "cherry" (score-word-game word-list letter-scores)))))
+
+;; rendezvous with cassidoo challenge: 23-11-15
+(defn do-tasks [tasks time-to-work]
+  (let [acc-time        (atom 0)
+        sorted-tasks    (sort-by :duration tasks)
+        completed-tasks (set (reduce (fn [completed-tasks next-task]
+                                        (if (< @acc-time time-to-work)
+                                          (do 
+                                            (swap! acc-time + (:duration next-task))
+                                            (conj completed-tasks next-task))
+                                          (reduced completed-tasks)))
+                                     []
+                                     sorted-tasks))]
+    (for [task tasks
+          :when (contains? completed-tasks task)]
+      (:name task))))
+
+(deftest do-tasks-test
+  (let [tasks [{:name "Task 1" :duration 4}
+               {:name "Task 2" :duration 2}
+               {:name "Task 3" :duration 7}
+               {:name "Task 4" :duration 5}
+               {:name "Task 5" :duration 1}
+               {:name "Task 6" :duration 3}
+               {:name "Task 7" :duration 6}
+               {:name "Task 8" :duration 6}
+               {:name "Task 9" :duration 6}]
+        time-to-work 6]
+
+    (is (= ["Task 2" "Task 5" "Task 6"] (do-tasks tasks time-to-work)))))
