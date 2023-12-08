@@ -385,16 +385,17 @@
 
 ;; rendezvous with cassidoo challenge: 23-11-15
 (defn do-tasks [tasks time-to-work]
-  (let [acc-time        (atom 0)
+  (let [time-remaining  (atom time-to-work)
         sorted-tasks    (sort-by :duration tasks)
-        completed-tasks (set (reduce (fn [completed-tasks next-task]
-                                        (if (< @acc-time time-to-work)
-                                          (do 
-                                            (swap! acc-time + (:duration next-task))
-                                            (conj completed-tasks next-task))
-                                          (reduced completed-tasks)))
-                                     []
-                                     sorted-tasks))]
+        completed-tasks (set 
+                          (reduce (fn [completed-tasks next-task]
+                                     (if (>= @time-remaining (:duration next-task))
+                                       (do 
+                                         (swap! time-remaining - (:duration next-task))
+                                         (conj completed-tasks next-task))
+                                       (reduced completed-tasks)))
+                                  []
+                                  sorted-tasks))]
     (for [task tasks
           :when (contains? completed-tasks task)]
       (:name task))))
@@ -405,10 +406,24 @@
                {:name "Task 3" :duration 7}
                {:name "Task 4" :duration 5}
                {:name "Task 5" :duration 1}
-               {:name "Task 6" :duration 3}
-               {:name "Task 7" :duration 6}
-               {:name "Task 8" :duration 6}
-               {:name "Task 9" :duration 6}]
-        time-to-work 6]
+               {:name "Task 6" :duration 3}]]
 
-    (is (= ["Task 2" "Task 5" "Task 6"] (do-tasks tasks time-to-work)))))
+    (is (= ["Task 2" "Task 5" "Task 6"] (do-tasks tasks 6)))
+    (is (= ["Task 2" "Task 5"] (do-tasks tasks 4)))))
+
+
+;; rendezvous with cassidoo challenge: 23-11-20
+(defn between-nums [a b op]
+  (let [[a b]  (sort [a b])
+        nums   (range (inc a) b)
+        prime? (fn [n] (when (> n 1)
+                         (empty? 
+                           (filter #(= 0 (mod n %)) (range 2 n)))))]
+    (case op
+      "even"  (filter even? nums)
+      "odd"   (filter odd? nums)
+      "prime" (filter prime? nums))))
+
+(deftest between-nums-test 
+  (is (= [4 6 8 10] (between-nums 3 11 "even")))
+  (is (= [2 3 5 7 11 13] (between-nums 15 1 "prime"))))

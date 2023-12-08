@@ -3,7 +3,8 @@
  :deps    {criterium/criterium        {:mvn/version "0.4.6"}
            io.github.pfeodrippe/wally {:mvn/version "0.0.2"}
            org.clojure/core.async     {:mvn/version "1.6.673"}
-           org.clojure/data.json      {:mvn/version "2.4.0"}}
+           org.clojure/data.json      {:mvn/version "2.4.0"}
+           org.clojure/data.csv       {:mvn/version "1.0.1"}}
 
  :aliases {:build {:deps {io.github.clojure/tools.build
                           {:git/tag "v0.8.3" :git/sha "0d20256"}}
