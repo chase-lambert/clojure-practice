@@ -427,3 +427,18 @@
 (deftest between-nums-test 
   (is (= [4 6 8 10] (between-nums 3 11 "even")))
   (is (= [2 3 5 7 11 13] (between-nums 15 1 "prime"))))
+
+
+;; rendezvous with cassidoo challenge: 24-01-15
+(defn flip [coll direction]
+  (case direction
+    :horizontal (mapv reverse coll)
+    :vertical   (reverse coll)))
+  
+(deftest flip-test
+  (let [array [[1 2 3]
+               [4 5 6]
+               [7 8 9]]]
+    (is (= [[3 2 1] [6 5 4] [9 8 7]] (flip array :horizontal)))
+    (is (= [[7 8 9] [4 5 6] [1 2 3]] (flip array :vertical)))))
+
