@@ -1,8 +1,8 @@
 (ns practice.challenges
   (:require
    [clojure.string :as str]
-   [clojure.test   :refer [deftest is]]))
-   ;; [criterium.core :as crit]))
+   [clojure.test   :refer [deftest is]]
+   [criterium.core :as cc]))
 
 
 ;; rendezvous with cassidoo: 22-07-31
@@ -223,7 +223,7 @@
   (->> nums
        (partition-by identity)
        (filter #(> (count %) 1))
-       (mapv vec)))
+       (into [])))
 
 (defn repeated-groups-transduce [nums]
   (let [xform (comp
@@ -232,8 +232,8 @@
     (into [] xform nums)))
 
 ;; (def nums (into [] (repeatedly 1000000 #(rand-int 10))))
-;; (crit/bench (repeated-groups nums))
-;; (crit/bench (repeated-groups-transduce nums))
+;; (cc/quick-bench (repeated-groups nums)) ;; nil
+;; (cc/quick-bench (repeated-groups-transduce nums))
 
 (deftest repeated-groups-test
   (is (= (repeated-groups [1 2 2 4 5]) [[2 2]]))
@@ -442,3 +442,35 @@
     (is (= [[3 2 1] [6 5 4] [9 8 7]] (flip array :horizontal)))
     (is (= [[7 8 9] [4 5 6] [1 2 3]] (flip array :vertical)))))
 
+
+;; rendezvous with cassidoo challenge: 24-05-13
+(defn max-product [^longs nums]
+  (->> (sort nums)
+       (take-last 3)
+       (reduce * 1)))
+
+
+(deftest max-product-test
+  (is (= 72 (max-product [2 4 1 3 -5 6]))))
+  
+
+;; rendezvous with cassidoo challenge: 24-05-20
+(defn fix-inverted-punc [s]
+  (let [sentences (->> (re-seq #".+?[.!?]" s)
+                       (map str/trim))]
+    (->> sentences
+         (map (fn [sentence]
+                (let [first-char (first sentence)
+                      last-char (last sentence)]
+                  (cond
+                    (#{\¡ \¿} first-char) sentence
+                    (= \! last-char) (str "¡" sentence)
+                    (= \? last-char) (str "¿" sentence)
+                    :else sentence))))
+         (str/join " "))))
+
+(deftest fix-inverted-punc-test
+  (is (= (fix-inverted-punc "Feliz cumpleaños!")
+         "¡Feliz cumpleaños!"))
+  (is (= (fix-inverted-punc "Ella ya se graduó de la universidad? ¡No!")
+         "¿Ella ya se graduó de la universidad? ¡No!")))
